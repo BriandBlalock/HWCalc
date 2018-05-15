@@ -13,6 +13,7 @@ class GUI:
     input_row_offset = 5
     input_column_offset = 5
     grid_size = 20
+    button_size = 1
 
     is_writing =  False
 
@@ -49,7 +50,7 @@ class GUI:
                 self.grid[x+1][y]['bg'] = color
             """
 
-            
+
 
     def toggle_writing(self, Event):
         self.is_writing = not(self.is_writing)
@@ -57,7 +58,7 @@ class GUI:
 
 
 
-    def create_grid(self):
+    def create_grid(self):  ##### Depricated, replaced by create Canvas #####
 
         # frame.bind  ``("<Button-1>", self.toggle_writing_on)
         # frame.bind("<ButtonRelease-1>", self.toggle_writing_off)
@@ -68,7 +69,7 @@ class GUI:
 
             for y in range(self.grid_size):
 
-                list.append( Button(root, bd = 1, text="   ", bg='white') )
+                list.append( Button(root, bd = 1, text="", bg='white', height=self.button_size, width=self.button_size) )
 
                 list[y].bind("<Motion>", self.fill)
                 list[y].bind("<ButtonPress-1>", self.toggle_writing)
@@ -77,6 +78,13 @@ class GUI:
             self.grid.append(list)
 
         self.grid = np.array(self.grid)
+
+    def create_canvas(self):
+
+        draw_area = Canvas(root, width=20,height = 20  )
+        draw_area.grid( row = self.input_row_offset, column=self.input_column_offset)
+
+
 
     def clear_grid(self, Event):
 
@@ -89,19 +97,44 @@ class GUI:
     def create_buttons(self):
 
         clear = Button (root, text = "clear")
-        clear.grid( row = 6, column = self.grid_size+6)
+        clear.grid( row = 6, column = self.grid_size+7)
         clear.bind("<Button-1>", self.clear_grid)
+
+        getV = Button(root, text="get Vals")
+        getV.grid(row=8, column=self.grid_size + 7)
+        getV.bind("<Button-1>", self.get_grid_values)
 
 
     def __init__(self, root):
 
         root.geometry('400x500')
         root.resizable(width=False, height=False)
-        root.bind_all("<ButtonRelease-1>", self.toggle_writing_off())
 
         self.create_display()
-        self.create_grid()
+        self.create_canvas()
         self.create_buttons()
+
+    def get_grid_values(self, Event):
+
+        returnList = []
+
+        for xVal in self.grid:
+            temp = []
+            for yVal in xVal:
+
+                if yVal['bg'] == "black":
+
+                    temp.append(255)
+                else:
+                    temp.append(0)
+
+            returnList.append(temp)
+
+        for xVal in returnList:
+            print(xVal)
+
+
+
 
 def main ():
 
